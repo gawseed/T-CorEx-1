@@ -56,9 +56,15 @@ def main():
         cells = sorted(cells, key=lambda x: np.abs(x[2]), reverse=True)
 
         print("Top {} most correlated variables at time period {} - {}:".format(
-            args.topn, df_index[window_size * t], df_index[window_size * t] + window_size * time_delta))
+            args.topn, df_index[window_size * t],
+            df_index[window_size * t] + window_size * time_delta))
         for i, j, c in cells[:args.topn]:
-            print("\t{:<15} {:<15} corr={:.2f}".format(columns[i], columns[j], c))
+            c1 = columns[i]
+            c2 = columns[j]
+            if 'keys' in statistics:
+                c1 = statistics['keys'][c1]
+                c2 = statistics['keys'][c2]
+            print("\t{:<15} {:<15} corr={:.2f}".format(c1, c2, c))
 
 
 if __name__ == '__main__':
