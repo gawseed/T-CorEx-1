@@ -8,7 +8,7 @@ import pandas as pd
 import argparse
 import pickle
 import sys
-from logging import debug
+from logging import debug, info
 
 # import T-CorEx and needed tools
 from tcorex import TCorex
@@ -52,6 +52,22 @@ def main():
                                   args.value_column, args.time_column)
         # read in the data and pivot it to a wide format
 
+    results = run_tcorex(df,
+                         window_size=args.window_size,
+                         n_hidden=args.n_hidden,
+                         gamma=args.gamma,
+                         l1=args.l1,
+                         max_iterations=args.max_iter,
+                         device=args.device)
+
+    info("Saving to {}".format(args.output_path))
+    with open(args.output_path, 'wb') as f:
+        pickle.dump(results, f)
+
+
+def run_tcorex(df, window_size, n_hidden, gamma, l1, max_iterations, device,
+               output_path):
+
     data = np.array(df).astype(np.float)
 
     # standardize the data
@@ -59,7 +75,7 @@ def main():
     data = scaler.fit_transform(data)
 
     # cut the tail for the data
-    reminder = data.shape[0] % args.window_size
+    reminder = data.shape[0] % window_size
     if reminder > 0:
         data = data[:-reminder]
 
@@ -67,36 +83,34 @@ def main():
     data = data + 1e-4 * np.random.normal(size=data.shape)
 
     # break it into non-overlapping periods
-    data, index_to_bucket = make_buckets(data, window=args.window_size, stride='full')
+    data, index_to_bucket = make_buckets(data, window=window_size, stride='full')
 
     # train T-CorEx
     nv = data[0].shape[1]
-    tc = TCorex(nt=len(data), nv=nv, n_hidden=args.n_hidden, l1=args.l1,
-                gamma=args.gamma, max_iter=args.max_iter, tol=1e-3,
+    tc = TCorex(nt=len(data), nv=nv, n_hidden=n_hidden, l1=l1,
+                gamma=gamma, max_iter=max_iterations, tol=1e-3,
                 optimizer_params={'lr': 0.01}, init=False, verbose=2,
-                device=args.device)
+                device=device)
     tc.fit(data)
 
     # save important things
     print("Calculating needed statistics")
     mis = tc.mis()
     clusters = [mi.argmax(axis=0) for mi in mis]
-    save_dict = {
+    results = {
         'clusters': clusters,
         'mutual_informations': mis,
         'tcorex_weights': tc.get_weights(),
         'factorizations': tc.get_factorization(),
         'covariance_matrices': (None if nv > 1000 else tc.get_covariance()),
-        'window_size': args.window_size,
+        'window_size': window_size,
         'df.index': df.index,
         'df.columns': df.columns,
         'thetas': tc.theta,
         'method': 'T-CorEx'
     }
 
-    print("Saving to {}".format(args.output_path))
-    with open(args.output_path, 'wb') as f:
-        pickle.dump(save_dict, f)
+    return results;
 
 
 def load_and_pivot_table(filename, key, value_column, time_column): 
