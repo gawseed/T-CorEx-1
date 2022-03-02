@@ -37,6 +37,7 @@ setup(name='T-CorEx',
       entry_points={
           'console_scripts': [
               'tcorex = tcorex.tools.tcorex:main',
+              'tcorex-plot = tcorex.tools.tcorex_plot:main',
           ]
       },
       classifiers=[
