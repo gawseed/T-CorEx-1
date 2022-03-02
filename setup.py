@@ -34,6 +34,11 @@ setup(name='T-CorEx',
                         'torch>=0.4.1'],
       tests_require=['nose>=1.3.7',
                      'tqdm>=4.26'],
+      entry_points={
+          'console_scripts': [
+              'tcorex = tcorex.tools.tcorex',
+          ]
+      },
       classifiers=[
           'Topic :: Scientific/Engineering :: Artificial Intelligence',
           'Topic :: Scientific/Engineering :: Information Analysis',
