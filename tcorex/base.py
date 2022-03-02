@@ -162,6 +162,9 @@ class TCorexBase(object):
                     print("eps: {:.4f}, iter: {} / {}, obj: {:.4f}, main: {:.4f}, reg: {:.4f}, delta: {:.6f} ".format(
                         eps, i_loop, self.max_iter, obj, main_obj, reg_obj, delta), end='\r')
 
+            if logging.DEBUG >= logging.root.level:
+                import sys
+                sys.stderr.write("\n")
             debug("Annealing iteration finished, iters: {}, time: {:.2f}s".format(
                 last_iter + 1, time.time() - start_time))
 
