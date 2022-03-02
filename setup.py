@@ -51,4 +51,4 @@ setup(name='T-CorEx',
           'Intended Audience :: Science/Research',
           'License :: OSI Approved :: GNU Affero General Public License v3'
       ],
-      packages=['tcorex', 'tcorex.experiments'])
+      packages=['tcorex', 'tcorex.experiments', 'tcorex.tools'])
