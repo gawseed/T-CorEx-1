@@ -36,7 +36,7 @@ setup(name='T-CorEx',
                      'tqdm>=4.26'],
       entry_points={
           'console_scripts': [
-              'tcorex = tcorex.tools.tcorex',
+              'tcorex = tcorex.tools.tcorex:main',
           ]
       },
       classifiers=[
