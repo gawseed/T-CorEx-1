@@ -51,8 +51,8 @@ def main():
                         format="%(levelname)-10s:\t%(message)s")
 
     # load the data
+    info("Reading from {}".format(args.data_path))
     if args.already_wide:
-        print("Reading from {}".format(args.data_path))
         df = pd.read_csv(args.data_path, index_col=0)
     else:
         df = load_and_pivot_table(args.data_path, args.key,
