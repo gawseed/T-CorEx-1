@@ -67,8 +67,8 @@ def main():
     if args.already_wide:
         df = pd.read_csv(args.data_path, index_col=0)
     else:
-        df = load_and_pivot_table(args.data_path, args.key,
-                                  args.value_column, args.time_column)
+        df = load_and_pivot_table(args.data_path, args.time_column,
+                                  args.key, args.value_column)
         # read in the data and pivot it to a wide format
 
     results = run_tcorex(df,
@@ -130,7 +130,7 @@ def run_tcorex(df, window_size, n_hidden, gamma, l1, max_iterations, device):
     return results;
 
 
-def pivot_table(df, key, value_column, time_column):
+def pivot_table(df, time_column, key, value_column):
     df = df.pivot_table(values=value_column,
                         columns=key, index=time_column)
 
@@ -149,7 +149,7 @@ def pivot_table(df, key, value_column, time_column):
     return df
 
 
-def load_and_pivot_table(filename, key, value_column, time_column): 
+def load_and_pivot_table(filename, time_column, key, value_column): 
     # load the data
     debug("Reading from {}".format(filename))
     df = pd.read_csv(filename,
