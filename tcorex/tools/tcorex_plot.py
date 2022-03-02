@@ -20,14 +20,16 @@ sns.set_style("whitegrid")
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-s', '--statistics_path', type=str, required=True,
-                        help='path to a T-CorEx statistics file')
     parser.add_argument('-o', '--output_path', type=str,
                         default='change-point-detection.png',
                         help='path for saving the figure ({path}.png or {path}.pdf)')
-    parser.add_argument('--invert', dest='invert', action='store_true')
-    parser.add_argument('--no-invert', dest='invert', action='store_false')
-    parser.set_defaults(invert=True)
+    parser.add_argument('-i', '--dont-invert', action='store_true',
+                        help="do not invert")
+
+    parser.add_argument('statistics_path', type=str,
+                        help='path to a T-CorEx statistics file (output from tcorex)')
+
+
     args = parser.parse_args()
 
     # import needed modules from ml-tools
@@ -42,7 +44,7 @@ def main():
 
     # compute the differences of neighboring precision matrices
     diffs = frob_diffs_given_factors(statistics['factorizations'],
-                                     inverse=args.invert)
+                                     inverse=(not args.dont_invert))
 
     # plot the figure and save it
     plt.figure(figsize=(10, 5))
