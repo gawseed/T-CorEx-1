@@ -8,7 +8,8 @@ import pandas as pd
 import argparse
 import pickle
 import sys
-from logging import debug, info
+import logging
+from logging import debug, info, warning, error, critical
 
 # import T-CorEx and needed tools
 from tcorex import TCorex
@@ -40,8 +41,14 @@ def main():
     parser.add_argument('--output-path', '-o', type=str, required=True,
                         help='path to saved file results')
     parser.add_argument('--device', '-D', type=str, default='cpu')
+    parser.add_argument("--log-level", "--ll", default="info",
+                        help="Define the logging verbosity level (debug, info, warning, error, fotal, critical).")
+
     args = parser.parse_args()
-    print(args)
+
+    log_level = args.log_level.upper()
+    logging.basicConfig(level=log_level,
+                        format="%(levelname)-10s:\t%(message)s")
 
     # load the data
     if args.already_wide:
