@@ -9,6 +9,7 @@ import pickle
 import sys
 import os
 import tcorex.plot_utils
+from logging import info, debug, warn
 
 import matplotlib
 matplotlib.use('agg')
@@ -19,17 +20,15 @@ sns.set_style("whitegrid")
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--tcorex_path', '-t', type=str, default='/nfs/isd/hrayrh/T-CorEx/',
-                        help='path to T-CorEx code')
-    parser.add_argument('--statistics_path', '-s', type=str, required=True,
+    parser.add_argument('-s', '--statistics_path', type=str, required=True,
                         help='path to a T-CorEx statistics file')
-    parser.add_argument('--output_path', '-o', type=str, default='change-point-detection.png',
+    parser.add_argument('-o', '--output_path', type=str,
+                        default='change-point-detection.png',
                         help='path for saving the figure ({path}.png or {path}.pdf)')
     parser.add_argument('--invert', dest='invert', action='store_true')
     parser.add_argument('--no-invert', dest='invert', action='store_false')
     parser.set_defaults(invert=True)
     args = parser.parse_args()
-    print(args)
 
     # import needed modules from ml-tools
     tcorex.plot_utils.set_style(plt)
@@ -60,7 +59,7 @@ def main():
     step = np.round(1.0 * len(xticks) / n_ticks).astype(int)
     plt.xticks(xticks[::step], xlabels[::step], rotation=60, ha='right')
 
-    print("Saving to {}".format(args.output_path))
+    info("Saving to {}".format(args.output_path))
     plt.savefig(args.output_path, bbox_inches="tight")
 
 

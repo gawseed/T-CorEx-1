@@ -1,4 +1,3 @@
-from __future__ import print_function
 from __future__ import absolute_import
 
 import nibabel as nib
@@ -17,7 +16,7 @@ def plot_least_varying(plt, clusters, coords, left, right):
     fig = plt.figure(figsize=(6, 6))
     ax = fig.gca(projection='3d')
     for k in range(left, right):
-        print(variances[order[k]])
+        debug(variances[order[k]])
         index = (clusters == order[k])
         filtered = coords[index]
         ax.scatter(filtered[:, 0], filtered[:, 1], filtered[:, 2], s=5, alpha=0.1)
@@ -36,7 +35,7 @@ def plot_most_important(plt, clusters, importance, coords, left, right, mode='ab
     fig = plt.figure(figsize=(6, 6))
     ax = fig.gca(projection='3d')
     for k in range(left, right):
-        print(a[order[k]])
+        debug(a[order[k]])
         index = (clusters == order[k])
         filtered = coords[index]
         ax.scatter(filtered[:, 0], filtered[:, 1], filtered[:, 2], s=5, alpha=0.1)
@@ -51,7 +50,7 @@ def plot_biggest(plt, clusters, coords, left, right):
     fig = plt.figure(figsize=(6, 6))
     ax = fig.gca(projection='3d')
     for k in range(left, right):
-        print(cnt[order[k]])
+        debug(cnt[order[k]])
         index = (clusters == order[k])
         filtered = coords[index]
         ax.scatter(filtered[:, 0], filtered[:, 1], filtered[:, 2], s=5, alpha=0.1)

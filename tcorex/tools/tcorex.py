@@ -21,36 +21,40 @@ def main():
 
     group = parser.add_argument_group("Input Data")
 
-    group.add_argument('--data_path', '-d', type=str, required=True,
-                        help='path to preprocessed data csv table')
     group.add_argument("--already-wide", action="store_true",
                         help="The data has already been pivoted")
-    group.add_argument('--value-column', '-v', type=str, default="count",
+    group.add_argument('-v', '--value-column', type=str, default="count",
                         help='name of the value column')
     group.add_argument('--time-column', type=str, default='timestamp',
                         help='name of the time column')
-    group.add_argument('--key', '-k', type=str, default='key',
+    group.add_argument('-k', '--key', type=str, default='key',
                         help='name of the key column')
 
     group = parser.add_argument_group("T-CorEx parameters")
-    group.add_argument('--n_hidden', '-z', type=int, required=True,
+    group.add_argument('-z', '--n_hidden', type=int, required=True,
                         help='Number of latent factors')
-    group.add_argument('--window-size', '-w', type=int, default=20,
+    group.add_argument('-w', '--window-size', type=int, default=20,
                         help='help=window size used in T-CorEx.')
-    group.add_argument('--l1', '-l', type=float, default=0.01,
+    group.add_argument('-l', '--l1', type=float, default=0.01,
                         help='L1 regularization strength')
-    group.add_argument('--gamma', '-g', type=float, default=0.5,
+    group.add_argument('-g', '--gamma', type=float, default=0.5,
                         help='T-CorEx gamma parameter')
-    group.add_argument('--max_iter', '-i', type=int, default=500,
+    group.add_argument('-i', '--max_iter', type=int, default=500,
                         help='Max number of iterations')
-    group.add_argument('--device', '-D', type=str, default='cpu')
+    group.add_argument('-D', '--device', type=str, default='cpu')
 
 
     group = parser.add_argument_group("Output")
-    group.add_argument('--output-path', '-o', type=str, required=True,
-                        help='path to saved file results')
     group.add_argument("--log-level", "--ll", default="info",
                         help="Define the logging verbosity level (debug, info, warning, error, fotal, critical).")
+
+
+    parser.add_argument('data_path', type=str,
+                        help='Path to csv table to analyze')
+
+    group.add_argument('output_path', type=argparse.FileType('wb'),
+                       default=sys.stdout, nargs="?",
+                       help='Path to saved results to in pkl format')
 
     args = parser.parse_args()
 
@@ -76,12 +80,10 @@ def main():
                          device=args.device)
 
     info("Saving to {}".format(args.output_path))
-    with open(args.output_path, 'wb') as f:
-        pickle.dump(results, f)
+    pickle.dump(results, args.output_path)
 
 
-def run_tcorex(df, window_size, n_hidden, gamma, l1, max_iterations, device,
-               output_path):
+def run_tcorex(df, window_size, n_hidden, gamma, l1, max_iterations, device):
 
     data = np.array(df).astype(np.float)
 
@@ -109,7 +111,7 @@ def run_tcorex(df, window_size, n_hidden, gamma, l1, max_iterations, device,
     tc.fit(data)
 
     # save important things
-    print("Calculating needed statistics")
+    debug("Calculating needed statistics")
     mis = tc.mis()
     clusters = [mi.argmax(axis=0) for mi in mis]
     results = {

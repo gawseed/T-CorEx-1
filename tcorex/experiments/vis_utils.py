@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-from __future__ import print_function
 from scipy.stats import multivariate_normal
 import numpy as np
 
@@ -24,5 +23,5 @@ def plot_for_next_timestep(plt, data, covs, title="Negative log-likelihood of es
     plt.ylabel("Negative log-likelihood")
     plt.xticks(range(1, nt))
     plt.show()
-    print("NLL for next time step = {}".format(np.mean(nll)))
+    debug("NLL for next time step = {}".format(np.mean(nll)))
     return np.mean(nll)

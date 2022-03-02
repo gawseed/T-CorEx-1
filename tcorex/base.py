@@ -1,9 +1,9 @@
 """ Base functions/classes for linear CorEx / T-CorEx methods.
 Some parts of the code are borrowed from https://github.com/gregversteeg/LinearCorex.
 """
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
+from logging import info, debug, warn
 
 from .experiments.misc import make_sure_path_exists
 from scipy.stats import norm, rankdata
@@ -55,7 +55,7 @@ def save(model, path, verbose=False):
     save_dir = os.path.dirname(path)
     make_sure_path_exists(save_dir)
     if verbose:
-        print('Saving into {}'.format(path))
+        info('Saving into {}'.format(path))
     torch.save(model, path)
 
 
@@ -101,7 +101,7 @@ class TCorexBase(object):
         self.optimizer_params = optimizer_params
         if verbose > 0:
             np.set_printoptions(precision=3, suppress=True, linewidth=160)
-            print('Linear CorEx with {:d} latent factors'.format(n_hidden))
+            debug('Linear CorEx with {:d} latent factors'.format(n_hidden))
         self.add_params = []  # used in _train_loop()
 
         # initialize later
@@ -116,7 +116,7 @@ class TCorexBase(object):
         """ train loop expects self have one variable x_input
         """
         if self.verbose > 0:
-            print("Starting the training loop ...")
+            info("Starting the training loop ...")
         # set the annealing schedule
         anneal_schedule = [0.]
         if self.anneal:
@@ -157,13 +157,11 @@ class TCorexBase(object):
 
                 main_obj = ret['main_obj']
                 reg_obj = ret['reg_obj']
-                if self.verbose > 1:
-                    print("eps: {:.4f}, iter: {} / {}, obj: {:.4f}, main: {:.4f}, reg: {:.4f}, delta: {:.6f} ".format(
-                        eps, i_loop, self.max_iter, obj, main_obj, reg_obj, delta), end='\r')
+                debug("eps: {:.4f}, iter: {} / {}, obj: {:.4f}, main: {:.4f}, reg: {:.4f}, delta: {:.6f} ".format(
+                    eps, i_loop, self.max_iter, obj, main_obj, reg_obj, delta), end='\r')
 
-            if self.verbose > 0:
-                print("Annealing iteration finished, iters: {}, time: {:.2f}s".format(
-                    last_iter + 1, time.time() - start_time))
+            debug("Annealing iteration finished, iters: {}, time: {:.2f}s".format(
+                last_iter + 1, time.time() - start_time))
 
         # clear cache to free some GPU memory
         if self.device.type == 'cuda':
@@ -238,7 +236,7 @@ class TCorexBase(object):
                 x = np.array([norm.ppf((rankdata(x_i) - 0.5) / len(x_i)) for x_i in x.T]).T
             ret[t] = x
         for w in set(warnings):
-            print(w)
+            warn(w)
         return ret
 
     def get_covariance(self, indices=None, normed=False):

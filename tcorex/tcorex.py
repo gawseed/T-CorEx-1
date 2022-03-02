@@ -1,9 +1,9 @@
 """ T-CorEx - Temporal Correlation Explanation.
 Given time-series data returns the covariance matrix for each time period.
 """
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
+from logging import info, debug
 
 from .base import TCorexBase
 from .corex import Corex
@@ -256,7 +256,7 @@ class TCorex(TCorexBase):
         # initialize weights using the weighs of the linear CorEx trained on all data
         if self.init:
             if self.verbose > 0:
-                print("Initializing with weights of a linear CorEx learned on whole data")
+                info("Initializing with weights of a linear CorEx learned on whole data")
             init_start = time.time()
             lin_corex = Corex(nv=self.nv,
                               n_hidden=self.m,
@@ -273,6 +273,6 @@ class TCorex(TCorexBase):
             lin_corex.fit(data_concat)
             self.pretrained_weights = [lin_corex.get_weights()] * self.nt
             if self.verbose > 0:
-                print("Initialization took {:.2f} seconds".format(time.time() - init_start))
+                info("Initialization took {:.2f} seconds".format(time.time() - init_start))
 
         return self._train_loop()

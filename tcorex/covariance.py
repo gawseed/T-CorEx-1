@@ -1,6 +1,6 @@
-from __future__ import print_function
 from __future__ import absolute_import
 
+from logging import info, debug, warn
 from scipy.stats import multivariate_normal
 import numpy as np
 
@@ -125,7 +125,7 @@ def spectral_diffs_given_factors(factors, inverse=True):
     nt = len(A)
     diff = [None] * (nt-1)
     for t in range(nt - 1):
-        print("Estimating norm of difference at time step: {}".format(t))
+        info("Estimating norm of difference at time step: {}".format(t))
         diff[t] = _estimate_diff_norm(A[t], d[t], A[t + 1], d[t + 1])
     return diff
 
@@ -156,7 +156,7 @@ def frob_diffs_given_factors(factors, inverse=True):
     nt = len(A)
     diff = [None] * (nt - 1)
     for t in range(nt - 1):
-        print("Calculating Frobenius norm of difference at time step: {}".format(t))
+        info("Calculating Frobenius norm of difference at time step: {}".format(t))
         diff[t] = _compute_diff_norm_fro(A[t], d[t], A[t + 1], d[t + 1])
     return diff
 
@@ -197,6 +197,6 @@ def compute_diff_row_norms(factors, inverse=True):
     nt = len(A)
     row_norms = [None] * (nt - 1)
     for t in range(nt - 1):
-        print("Calculating row norms of difference matrix at time step: {}".format(t))
+        info("Calculating row norms of difference matrix at time step: {}".format(t))
         row_norms[t] = _compute_diff_row_norms(A[t], d[t], A[t+1], d[t+1])
     return row_norms

@@ -1,4 +1,3 @@
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 
@@ -388,10 +387,10 @@ def load_sp500(train_cnt, val_cnt, test_cnt, start_date='2000-01-01', end_date='
     val_data += np.sqrt(noise_var) * np.random.normal(size=val_data.shape)
     test_data += np.sqrt(noise_var) * np.random.normal(size=test_data.shape)
 
-    print('S&P 500 data is loaded:')
-    print('\ttrain shape:', train_data.shape)
-    print('\tval   shape:', val_data.shape)
-    print("\ttest  shape:", test_data.shape)
+    debug('S&P 500 data is loaded:')
+    debug('\ttrain shape:', train_data.shape)
+    debug('\tval   shape:', val_data.shape)
+    debug("\ttest  shape:", test_data.shape)
 
     if return_index:
         return train_data, val_data, test_data, symbols, categories, df.index
@@ -470,10 +469,10 @@ def load_trading_economics(train_cnt, val_cnt, test_cnt, start_date='2000-01-01'
     val_data += np.sqrt(noise_var) * np.random.normal(size=val_data.shape)
     test_data += np.sqrt(noise_var) * np.random.normal(size=test_data.shape)
 
-    print('Trading economics is loaded:')
-    print('\ttrain shape:', train_data.shape)
-    print('\tval   shape:', val_data.shape)
-    print("\ttest  shape:", test_data.shape)
+    debug('Trading economics is loaded:')
+    debug('\ttrain shape:', train_data.shape)
+    debug('\tval   shape:', val_data.shape)
+    debug("\ttest  shape:", test_data.shape)
 
     if return_index:
         return train_data, val_data, test_data, symbols, countries, df.index

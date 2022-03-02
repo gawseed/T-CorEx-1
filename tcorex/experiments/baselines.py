@@ -1,4 +1,3 @@
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 
@@ -6,6 +5,7 @@ from scipy.io import savemat, loadmat
 from subprocess import Popen, PIPE
 from tcorex.covariance import calculate_nll_score
 from .data import make_buckets
+from logging import info, debug, warn
 
 import numpy as np
 import time
@@ -26,7 +26,7 @@ class Baseline(object):
 
     def select(self, train_data, val_data, params, verbose=True):
         if verbose:
-            print("\n{}\nSelecting the best parameter values for {} ...".format('-' * 80, self.name))
+            debug("\n{}\nSelecting the best parameter values for {} ...".format('-' * 80, self.name))
 
         best_score = 1e18
         best_params = None
@@ -64,12 +64,12 @@ class Baseline(object):
 
         for index, cur_params in enumerate(grid):
             if verbose:
-                print("done {} / {}".format(index, len(grid)), end='')
-                print(" | running with ", end='')
+                debug("done {} / {}".format(index, len(grid)), end='')
+                debug(" | running with ", end='')
                 for k, v in cur_params:
                     if k != '__dummy__':
-                        print('{}: {}\t'.format(k, v), end='')
-                print('')
+                        debug('{}: {}\t'.format(k, v), end='')
+                debug('')
 
             cur_params = dict(cur_params)
             for k, v in const_params.items():
@@ -91,14 +91,14 @@ class Baseline(object):
                     (cur_covs, cur_method) = self._train(train_data, cur_params, verbose)
                 cur_score = calculate_nll_score(data=val_data, covs=cur_covs)
             except Exception as e:
-                print("Failed to train and evaluate method: {}, message: {}".format(self.name, str(e)))
+                warn("Failed to train and evaluate method: {}, message: {}".format(self.name, str(e)))
                 cur_score = None
                 cur_covs = None
                 cur_method = None
             results.append((cur_params, cur_score))
 
             if verbose:
-                print('\tcurrent score: {}'.format(cur_score))
+                debug('\tcurrent score: {}'.format(cur_score))
 
             if (best_params is None) or (not np.isnan(cur_score) and cur_score < best_score):
                 best_score = cur_score
@@ -106,7 +106,7 @@ class Baseline(object):
                 best_covs = cur_covs
                 best_method = cur_method
         if verbose:
-            print('\nFinished with best validation score: {}'.format(best_score))
+            debug('\nFinished with best validation score: {}'.format(best_score))
 
         self._trained = True
         self._val_score = best_score
@@ -123,10 +123,10 @@ class Baseline(object):
     def evaluate(self, test_data, verbose=True):
         assert self._trained
         if verbose:
-            print("Evaluating {} ...".format(self.name))
+            debug("Evaluating {} ...".format(self.name))
         nll = calculate_nll_score(data=test_data, covs=self._covs)
         if verbose:
-            print("\tScore: {:.4f}".format(nll))
+            debug("\tScore: {:.4f}".format(nll))
         return nll
 
     def get_covariance(self):
@@ -158,12 +158,12 @@ class Diagonal(Baseline):
 
     def _train(self, train_data, params, verbose):
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
         covs = [np.diag(np.maximum(np.var(x, axis=0), self.min_var)) for x in train_data]
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None
 
 
@@ -174,7 +174,7 @@ class LedoitWolf(Baseline):
     def _train(self, train_data, params, verbose):
         import sklearn.covariance as sk_cov
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
         covs = []
         for x in train_data:
@@ -183,7 +183,7 @@ class LedoitWolf(Baseline):
             covs.append(est.covariance_)
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None
 
 
@@ -194,7 +194,7 @@ class OAS(Baseline):
     def _train(self, train_data, params, verbose):
         import sklearn.covariance as sk_cov
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
         covs = []
         for x in train_data:
@@ -203,7 +203,7 @@ class OAS(Baseline):
             covs.append(est.covariance_)
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None
 
 
@@ -214,7 +214,7 @@ class PCA(Baseline):
     def _train(self, train_data, params, verbose):
         import sklearn.decomposition as sk_dec
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
         try:
             covs = []
@@ -225,10 +225,10 @@ class PCA(Baseline):
         except Exception as e:
             covs = None
             if verbose:
-                print("\t{} failed with message: {}".format(self.name, e.message))
+                debug("\t{} failed with message: {}".format(self.name, e.message))
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None
 
 
@@ -239,7 +239,7 @@ class SparsePCA(Baseline):
     def _train(self, train_data, params, verbose):
         import sklearn.decomposition as sk_dec
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
         try:
             covs = []
@@ -262,10 +262,10 @@ class SparsePCA(Baseline):
         except Exception as e:
             covs = None
             if verbose:
-                print("\t{} failed with message: {}".format(self.name, e.message))
+                debug("\t{} failed with message: {}".format(self.name, e.message))
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None
 
 
@@ -276,7 +276,7 @@ class FactorAnalysis(Baseline):
     def _train(self, train_data, params, verbose):
         import sklearn.decomposition as sk_dec
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
         try:
             covs = []
@@ -287,10 +287,10 @@ class FactorAnalysis(Baseline):
         except Exception as e:
             covs = None
             if verbose:
-                print("\t{} failed with message: {}".format(self.name, e.message))
+                debug("\t{} failed with message: {}".format(self.name, e.message))
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None
 
 
@@ -301,7 +301,7 @@ class GraphLasso(Baseline):
     def _train(self, train_data, params, verbose):
         import sklearn.covariance as sk_cov
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
         try:
             covs = []
@@ -312,11 +312,11 @@ class GraphLasso(Baseline):
                 covs.append(est.covariance_)
         except Exception as e:
             if verbose:
-                print("\t{} failed with message: {}".format(self.name, e.message))
+                debug("\t{} failed with message: {}".format(self.name, e.message))
             covs = None
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None
 
 
@@ -327,7 +327,7 @@ class LinearCorex(Baseline):
     def _train(self, train_data, params, verbose):
         import linearcorex
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
         covs = []
         for x in train_data:
@@ -338,7 +338,7 @@ class LinearCorex(Baseline):
             covs.append(c.get_covariance())
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None
 
 
@@ -349,7 +349,7 @@ class TimeVaryingGraphLasso(Baseline):
     def _train(self, train_data, params, verbose):
         from tcorex.experiments.methods.TVGL import TVGL
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
 
         # if data is 3D (nt, ns, nv), make it 2D (nt * ns, nv)
@@ -374,7 +374,7 @@ class TimeVaryingGraphLasso(Baseline):
                 covs.append(bucket_covs[i // params['lengthOfSlice']])
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None
 
     def timeit(self, train_data, params):
@@ -404,7 +404,7 @@ class TCorex(Baseline):
 
     def _train(self, train_data, params, verbose):
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
 
         params['nt'] = len(train_data)
@@ -414,7 +414,7 @@ class TCorex(Baseline):
 
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, c
 
     def timeit(self, train_data, params):
@@ -432,7 +432,7 @@ class QUIC(Baseline):
 
     def _train(self, train_data, params, verbose):
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
         os.chdir('tcorex/experiments/methods/QUIC')
 
@@ -460,7 +460,7 @@ class QUIC(Baseline):
             process.wait()
             if verbose > 1:
                 stdout, stderr = process.communicate()
-                print("Stdout:\n{}\nStderr:\n{}".format(stdout, stderr))
+                debug("Stdout:\n{}\nStderr:\n{}".format(stdout, stderr))
 
             # collect outputs from exp_id.out.mat file
             outs = loadmat('{}.out.mat'.format(exp_id))
@@ -474,7 +474,7 @@ class QUIC(Baseline):
 
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None
 
     def timeit(self, train_data, params):
@@ -519,7 +519,7 @@ class BigQUIC(Baseline):
 
     def _train(self, train_data, params, verbose):
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
         os.chdir('tcorex/experiments/methods/BigQUIC/bigquic')
 
@@ -548,7 +548,7 @@ class BigQUIC(Baseline):
             process.wait()
             if verbose > 1:
                 stdout, stderr = process.communicate()
-                print("Stdout:\n{}\nStderr:\n{}".format(stdout, stderr))
+                debug("Stdout:\n{}\nStderr:\n{}".format(stdout, stderr))
 
             # collect outputs from exp_id.out.txt file
             nv = X.shape[1]
@@ -574,7 +574,7 @@ class BigQUIC(Baseline):
 
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None
 
     def timeit(self, train_data, params):
@@ -624,7 +624,7 @@ class LTGL(Baseline):
     def _train(self, train_data, params, verbose):
         from regain.covariance import LatentTimeGraphLasso
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
 
         train_data = np.array(train_data)  # expects 3D data
@@ -641,7 +641,7 @@ class LTGL(Baseline):
         covs = ltgl.covariance_
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None
 
 
@@ -655,7 +655,7 @@ class LVGLASSO(Baseline):
     def _train(self, train_data, params, verbose):
         from regain.covariance import LatentGraphLasso
         if verbose:
-            print("Training {} ...".format(self.name))
+            debug("Training {} ...".format(self.name))
         start_time = time.time()
         covs = []
         for X in train_data:
@@ -668,5 +668,5 @@ class LVGLASSO(Baseline):
             covs.append(lvglasso.covariance_)
         finish_time = time.time()
         if verbose:
-            print("\tElapsed time {:.1f}s".format(finish_time - start_time))
+            debug("\tElapsed time {:.1f}s".format(finish_time - start_time))
         return covs, None

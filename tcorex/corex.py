@@ -1,10 +1,10 @@
 """ Reimplementation of linear CorEx in PyTorch (https://arxiv.org/abs/1706.03353).
 Some parts of the code are borrowed from https://github.com/gregversteeg/LinearCorex.
 """
-from __future__ import print_function
 from __future__ import division
 from __future__ import absolute_import
 
+from logging import info, debug, warn
 from scipy.stats import norm, rankdata
 from . import base
 import numpy as np
@@ -61,7 +61,7 @@ class Corex:
         self.optimizer_params = optimizer_params
         if verbose > 0:
             np.set_printoptions(precision=3, suppress=True, linewidth=160)
-            print('Linear CorEx with {:d} latent factors'.format(n_hidden))
+            debug('Linear CorEx with {:d} latent factors'.format(n_hidden))
 
         # define the weights of the model
         self.ws = np.random.normal(loc=0, scale=1.0 / np.sqrt(self.nv), size=(self.m, self.nv))
@@ -160,13 +160,12 @@ class Corex:
                 if delta < self.tol:
                     break
 
-                if self.verbose > 1:
-                    print("eps: {}, iter: {} / {}, obj: {:.4f}, delta: {:.6f}".format(
-                        eps, i_loop, self.max_iter, history[-1], delta), end='\r')
+                debug("eps: {}, iter: {} / {}, obj: {:.4f}, delta: {:.6f}".format(
+                    eps, i_loop, self.max_iter, history[-1], delta), end='\r')
 
-            if self.verbose > 0:
-                print("Annealing iteration finished, iters: {}, time: {:.2f}s".format(
-                    last_iter+1, time.time() - start_time))
+                
+            debug("Annealing iteration finished, iters: {}, time: {:.2f}s".format(
+                last_iter+1, time.time() - start_time))
 
         # clear cache to free some GPU memory
         if self.device.type == 'cuda':
@@ -214,7 +213,7 @@ class Corex:
                 self.theta = (mean, std)
             x = ((x - self.theta[0]) / self.theta[1])
             if np.max(np.abs(x)) > 6 and self.verbose > 0:
-                print("Warning: outliers more than 6 stds away from mean. Consider using gaussianize='outliers'")
+                warn("Warning: outliers more than 6 stds away from mean. Consider using gaussianize='outliers'")
         elif self.gaussianize == 'outliers':
             if fit:
                 mean = np.mean(x, axis=0)
@@ -222,7 +221,7 @@ class Corex:
                 self.theta = (mean, std)
             x = base.g((x - self.theta[0]) / self.theta[1])  # g truncates long tails
         elif self.gaussianize == 'empirical':
-            print("Warning: correct inversion/transform of empirical gauss transform not implemented.")
+            warn("Warning: correct inversion/transform of empirical gauss transform not implemented.")
             x = np.array([norm.ppf((rankdata(x_i) - 0.5) / len(x_i)) for x_i in x.T]).T
         return x
 
