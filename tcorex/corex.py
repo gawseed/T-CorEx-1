@@ -4,6 +4,7 @@ Some parts of the code are borrowed from https://github.com/gregversteeg/LinearC
 from __future__ import division
 from __future__ import absolute_import
 
+import logging
 from logging import info, debug, warn
 from scipy.stats import norm, rankdata
 from . import base
