@@ -32,7 +32,7 @@ def main():
     print(args)
 
     # import needed modules from ml-tools
-    plot_utils.set_style(plt)
+    tcorex.plot_utils.set_style(plt)
 
     # import needed tools from T-CorEx code
     from tcorex.covariance import frob_diffs_given_factors
