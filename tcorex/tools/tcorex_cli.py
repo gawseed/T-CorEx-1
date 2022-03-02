@@ -130,12 +130,7 @@ def run_tcorex(df, window_size, n_hidden, gamma, l1, max_iterations, device):
     return results;
 
 
-def load_and_pivot_table(filename, key, value_column, time_column): 
-    # load the data
-    debug("Reading from {}".format(filename))
-    df = pd.read_csv(filename,
-                     dtype={'count': np.int32, 'timestamp': np.int32,
-                            'key': str})
+def pivot_table(df, key, value_column, time_column):
     df = df.pivot_table(values=value_column,
                         columns=key, index=time_column)
 
@@ -152,6 +147,16 @@ def load_and_pivot_table(filename, key, value_column, time_column):
     df = df.fillna(0)
 
     return df
+
+
+def load_and_pivot_table(filename, key, value_column, time_column): 
+    # load the data
+    debug("Reading from {}".format(filename))
+    df = pd.read_csv(filename,
+                     dtype={'count': np.int32, 'timestamp': np.int32,
+                            'key': str})
+    import pdb ; pdb.set_trace()
+    return pivot_table(df, key, value_column, time_column)
 
 
 if __name__ == '__main__':
