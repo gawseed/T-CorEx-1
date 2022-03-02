@@ -164,6 +164,7 @@ class Corex:
                     eps, i_loop, self.max_iter, history[-1], delta), end='\r')
 
                 
+            debug("") # get past the newline
             debug("Annealing iteration finished, iters: {}, time: {:.2f}s".format(
                 last_iter+1, time.time() - start_time))
 
