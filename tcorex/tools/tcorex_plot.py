@@ -26,6 +26,9 @@ def main():
     parser.add_argument('-i', '--dont-invert', action='store_true',
                         help="do not invert")
 
+    parser.add_argument("--log-level", "--ll", default="info",
+                        help="Define the logging verbosity level (debug, info, warning, error, fotal, critical).")
+
     parser.add_argument('statistics_path', type=str,
                         help='path to a T-CorEx statistics file (output from tcorex)')
 
