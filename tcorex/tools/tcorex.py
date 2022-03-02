@@ -18,30 +18,38 @@ from tcorex.experiments.data import make_buckets
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data_path', '-d', type=str, required=True,
+
+    group = parser.add_argument_group("Input Data")
+
+    group.add_argument('--data_path', '-d', type=str, required=True,
                         help='path to preprocessed data csv table')
-    parser.add_argument("--already-wide", action="store_true",
+    group.add_argument("--already-wide", action="store_true",
                         help="The data has already been pivoted")
-    parser.add_argument('--value-column', '-v', type=str, default="count",
+    group.add_argument('--value-column', '-v', type=str, default="count",
                         help='name of the value column')
-    parser.add_argument('--time-column', type=str, default='timestamp',
+    group.add_argument('--time-column', type=str, default='timestamp',
                         help='name of the time column')
-    parser.add_argument('--key', '-k', type=str, default='key',
+    group.add_argument('--key', '-k', type=str, default='key',
                         help='name of the key column')
-    parser.add_argument('--n_hidden', '-z', type=int, required=True,
+
+    group = parser.add_argument_group("T-CorEx parameters")
+    group.add_argument('--n_hidden', '-z', type=int, required=True,
                         help='Number of latent factors')
-    parser.add_argument('--window-size', '-w', type=int, default=20,
+    group.add_argument('--window-size', '-w', type=int, default=20,
                         help='help=window size used in T-CorEx.')
-    parser.add_argument('--l1', '-l', type=float, default=0.01,
+    group.add_argument('--l1', '-l', type=float, default=0.01,
                         help='L1 regularization strength')
-    parser.add_argument('--gamma', '-g', type=float, default=0.5,
+    group.add_argument('--gamma', '-g', type=float, default=0.5,
                         help='T-CorEx gamma parameter')
-    parser.add_argument('--max_iter', '-i', type=int, default=500,
+    group.add_argument('--max_iter', '-i', type=int, default=500,
                         help='Max number of iterations')
-    parser.add_argument('--output-path', '-o', type=str, required=True,
+    group.add_argument('--device', '-D', type=str, default='cpu')
+
+
+    group = parser.add_argument_group("Output")
+    group.add_argument('--output-path', '-o', type=str, required=True,
                         help='path to saved file results')
-    parser.add_argument('--device', '-D', type=str, default='cpu')
-    parser.add_argument("--log-level", "--ll", default="info",
+    group.add_argument("--log-level", "--ll", default="info",
                         help="Define the logging verbosity level (debug, info, warning, error, fotal, critical).")
 
     args = parser.parse_args()
