@@ -163,7 +163,7 @@ class Corex:
                 debug("eps: {}, iter: {} / {}, obj: {:.4f}, delta: {:.6f}".format(
                     eps, i_loop, self.max_iter, history[-1], delta), end='\r')
 
-            debug("\nAnnealing iteration finished, iters: {}, time: {:.2f}s".format(
+            debug("Annealing iteration finished, iters: {}, time: {:.2f}s".format(
                 last_iter+1, time.time() - start_time))
 
         # clear cache to free some GPU memory
