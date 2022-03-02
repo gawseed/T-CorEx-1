@@ -36,7 +36,7 @@ setup(name='T-CorEx',
                      'tqdm>=4.26'],
       entry_points={
           'console_scripts': [
-              'tcorex = tcorex.tools.tcorex:main',
+              'tcorex = tcorex.tools.tcorex_cli:main',
               'tcorex-plot = tcorex.tools.tcorex_plot:main',
               'tcorex-changepoints = tcorex.tools.tcorex_changepoints:main',
           ]
