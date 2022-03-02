@@ -12,7 +12,7 @@ from logging import debug
 
 # import T-CorEx and needed tools
 from tcorex import TCorex
-from experiments.data import make_buckets
+from tcorex.experiments.data import make_buckets
 
 
 def main():
