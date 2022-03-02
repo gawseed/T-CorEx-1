@@ -4,6 +4,7 @@ Some parts of the code are borrowed from https://github.com/gregversteeg/LinearC
 from __future__ import division
 from __future__ import absolute_import
 from logging import info, debug, warn
+import logging
 
 from .experiments.misc import make_sure_path_exists
 from scipy.stats import norm, rankdata
@@ -157,8 +158,9 @@ class TCorexBase(object):
 
                 main_obj = ret['main_obj']
                 reg_obj = ret['reg_obj']
-                debug("eps: {:.4f}, iter: {} / {}, obj: {:.4f}, main: {:.4f}, reg: {:.4f}, delta: {:.6f} ".format(
-                    eps, i_loop, self.max_iter, obj, main_obj, reg_obj, delta), end='\r')
+                if logging.DEBUG >= logging.root.level:
+                    print("eps: {:.4f}, iter: {} / {}, obj: {:.4f}, main: {:.4f}, reg: {:.4f}, delta: {:.6f} ".format(
+                        eps, i_loop, self.max_iter, obj, main_obj, reg_obj, delta), end='\r')
 
             debug("Annealing iteration finished, iters: {}, time: {:.2f}s".format(
                 last_iter + 1, time.time() - start_time))
