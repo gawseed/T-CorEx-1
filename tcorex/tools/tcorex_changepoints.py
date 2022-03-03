@@ -58,14 +58,17 @@ def main():
         print("Top {} most correlated variables at time period {} - {}:".format(
             args.topn, df_index[window_size * t],
             df_index[window_size * t] + window_size * time_delta))
+        keys=set()
         for i, j, c in cells[:args.topn]:
             c1 = columns[i]
             c2 = columns[j]
             if 'keys' in statistics:
+                keys.add(c1)
+                keys.add(c2)
                 c1 = statistics['keys'][c1]
                 c2 = statistics['keys'][c2]
             print("\t{:<15} {:<15} corr={:.2f}".format(c1, c2, c))
-
+        print(f'keys: {",".join(map(str,keys))}')
 
 if __name__ == '__main__':
     main()
