@@ -3,7 +3,7 @@ from setuptools import setup
 with open("README.md") as f:
     long_description = f.read()
 
-setup(name='T-CorEx',
+setup(name='gawseed-tcorex',
       version='1.1',
       description='Correlation Explanation Methods',
       long_description=long_description,
