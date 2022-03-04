@@ -73,8 +73,11 @@ def main():
                 keys.add(c2)
                 c1 = statistics['keys'][c1]
                 c2 = statistics['keys'][c2]
-            print("\tcorr={:.2f} {:<15} {:<15} ".format(c, c1, c2))
-        print(f'keys: {",".join(map(str,keys))}')
+            print("    corr={:.2f}  {:<30}  {:<30} ".format(c, c1, c2))
+        if len(keys) > 0:
+            print(f'    keys: {",".join(map(str,keys))}')
+        else:
+            print("    No viable matches found")
         print("")
 
 
