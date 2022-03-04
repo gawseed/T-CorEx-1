@@ -69,6 +69,7 @@ def main():
                 c2 = statistics['keys'][c2]
             print("\t{:<15} {:<15} corr={:.2f}".format(c1, c2, c))
         print(f'keys: {",".join(map(str,keys))}')
+        print("")
 
 if __name__ == '__main__':
     main()
