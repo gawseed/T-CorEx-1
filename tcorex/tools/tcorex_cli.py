@@ -31,7 +31,7 @@ def main():
                         help='name of the key column')
 
     group = parser.add_argument_group("T-CorEx parameters")
-    group.add_argument('-n', '--n_hidden', type=int, required=True,
+    group.add_argument('-n', '-z', '--n_hidden', type=int, required=True,
                         help='Number of latent factors')
     group.add_argument('-w', '--window-size', type=int, default=20,
                         help='help=window size used in T-CorEx.')
