@@ -1,4 +1,69 @@
+# Purpose
+
+The T-Corex algorithm is designed to identify changes in correlation
+in datasets of large signals.  Given windows of signals.
+
+This package modifies the [original implementation] Hrayr Harutyunyan to
+add documentation and CLI tools.
+
+[original implementation]: https://github.com/hrayrhar/T-CorEx
+
+# Usage
+
+To analyze a temporal time-series of data in a csv file, run tcorex 
+similar to:
+
+```
+tcorex -w 30 -n 100 -w 30 -g .1 -l .5 input_data.csv output.pkl
+```
+
+Discussion and help with selecting parameters is discussed below.
+
+## Picking algorithm parameters
+
+### Number of latent factors (-n)
+
+Look at the number of signals you have, and if you have a lot there
+should be more latent factors.  If
+you pick a value too low, then all the signals will appear to be
+correlated even when they are not.  If you pick a value which is too
+large, only an identity matrix will be produced and all the signals
+will appear independent.  Typically start with a roughly small value
+and raise it to improve results with respect to signals that are
+actually related.
+
+The number of latent factors should be roughly 2 order of magnitudes
+lower (IE *number_of_signals/100*).
+
+### Window size (-w)
+
+The algorithm is designed to look for changes in correlations between
+two windows.
+
+The window size indicates how frequently changes will happen to
+attempt to find changes between different window sizes.  If the window
+is too small, then the accuracy will be reduced and more correlations
+will be found as signals always appear similar at some point when
+broken into small chunks.  If the window is too large, then no changes
+will be easily detected because the difference between varying signals
+will appear large.  When windows are large, you also lose track about
+where correlation changes actually happen because the change point can
+be anywhere in the window.
+
+### Gamma
+
+Range: 0.1-10
+
+### L1 regularization strength
+
+L1 is better for signals with rapid changes
+
+### L2
+
+Better for smooth time series
+
 # Correlation Explanation Methods
+
 Official implementation of linear correlation explanation (linear CorEx) and temporal correlation explanation (T-CorEx) methods.
 
 #### Linear CorEx
@@ -193,3 +258,5 @@ def main():
 if __name__ == '__main__':
     main()
 ```
+
+
