@@ -14,10 +14,14 @@ from argparse import FileType
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--topk', '-k', type=int, default=20,
+    parser.add_argument('-k', '--topk', type=int, default=20,
                         help='number of variables to consider from each cluster')
-    parser.add_argument('--topn', '-n', type=int, default=10,
+    parser.add_argument('-n', '--topn', type=int, default=10,
                         help='number of most correlated pairs to show')
+    parser.add_argument("-m", "--min-correlation", default=1.0, type=float,
+                        help="Minimum correlation value to print")
+
+
     parser.add_argument("pkl_file", help="Saved file to display changepoints from")
     args = parser.parse_args()
 
@@ -60,6 +64,8 @@ def main():
             df_index[window_size * t] + window_size * time_delta))
         keys=set()
         for i, j, c in cells[:args.topn]:
+            if c < args.min_correlation:
+                continue
             c1 = columns[i]
             c2 = columns[j]
             if 'keys' in statistics:
@@ -67,9 +73,10 @@ def main():
                 keys.add(c2)
                 c1 = statistics['keys'][c1]
                 c2 = statistics['keys'][c2]
-            print("\t{:<15} {:<15} corr={:.2f}".format(c1, c2, c))
+            print("\tcorr={:.2f} {:<15} {:<15} ".format(c, c1, c2))
         print(f'keys: {",".join(map(str,keys))}')
         print("")
+
 
 if __name__ == '__main__':
     main()
