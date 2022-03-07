@@ -10,6 +10,16 @@ add documentation and CLI tools.
 
 # Usage
 
+## Installation
+
+Install with `pip` (or `pipx`):
+
+```
+pip3 install gawseed-tcorex
+```
+
+## Analysis
+
 To analyze a temporal time-series of data in a csv file, run tcorex 
 similar to:
 
@@ -18,6 +28,22 @@ tcorex -w 30 -n 100 -w 30 -g .1 -l .5 input_data.csv output.pkl
 ```
 
 Discussion and help with selecting parameters is discussed below.
+
+## Displaying results
+
+To list the correlations within each window, use
+`tcorex-changepoints` on the resulting pkl file:
+
+```
+tcorex-changepoints output.pkl
+```
+
+To show a graph of which time periods had the highest rate of
+correlation changes, use `tcorex-plot`:
+
+```
+tcorex-plot -o changes output.pkl
+```
 
 ## Picking algorithm parameters
 
@@ -54,13 +80,17 @@ be anywhere in the window.
 
 Range: 0.1-10
 
+The Gamma value sets the decay rate for sample weights.  Bigger values
+will result in more data being included, which is good for smaller
+datasets.  If enough data is present, then low values should be used.
+
 ### L1 regularization strength
 
-L1 is better for signals with rapid changes
+Higher L1 values are better better for signals with rapid changes
 
 ### L2
 
-Better for smooth time series
+Better for smooth time series.  There is no current CLI option for this.
 
 # Correlation Explanation Methods
 
