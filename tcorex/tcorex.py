@@ -53,7 +53,7 @@ class TCorex(TCorexBase):
         self.l2 = l2
         self.reg_type = reg_type
         self.init = init
-        self.gamma = np.float(gamma)
+        self.gamma = np.float32(gamma)
         self.max_sample_count = max_sample_cnt
         self.weighted_obj = weighted_obj
 

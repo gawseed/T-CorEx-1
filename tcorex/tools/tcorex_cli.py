@@ -85,7 +85,7 @@ def main():
 
 def run_tcorex(df, window_size, n_hidden, gamma, l1, max_iterations, device):
 
-    data = np.array(df).astype(np.float)
+    data = np.array(df).astype(np.float32)
 
     # standardize the data
     scaler = StandardScaler()

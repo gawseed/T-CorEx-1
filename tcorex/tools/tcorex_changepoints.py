@@ -46,7 +46,7 @@ def main():
     m, nv = mis[0].shape
 
     for t in range(nt):
-        indices = np.zeros((nv,), dtype=np.bool)
+        indices = np.zeros((nv,), dtype=bool)
         for j in range(m):
             cur_topk = np.argsort(-mis[t][j])[:args.topk]
             for idx in cur_topk:
