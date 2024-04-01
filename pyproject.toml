@@ -7,18 +7,19 @@ name = "gawseed-tcorex"
 dynamic = ["version"]
 description = "Correlation Explanation Methods"
 readme = "README.md"
-license = "GNU Affero General Public License v3.0"
+license = "agpl-3.0"
 authors = [
     { name = "Hrayr Harutyunyan", email = "harhro@gmail.com" },
 ]
 classifiers = [
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU Affero General Public License v3",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Scientific/Engineering :: Mathematics",
@@ -40,17 +41,17 @@ dependencies = [
 ]
 
 [project.scripts]
-tcorex = "tcorex.tools.tcorex_cli:main"
-tcorex-changepoints = "tcorex.tools.tcorex_changepoints:main"
-tcorex-plot = "tcorex.tools.tcorex_plot:main"
+tcorex = "gawseed_tcorex.tools.tcorex_cli:main"
+tcorex-changepoints = "gawseed_tcorex.tools.tcorex_changepoints:main"
+tcorex-plot = "gawseed_tcorex.tools.tcorex_plot:main"
 
 [project.urls]
 Homepage = "https://github.com/gawseed/T-CorEx"
 
 [tool.hatch.version]
-path = "tcorex/__init__.py"
+path = "gawseed_tcorex/__init__.py"
 
 [tool.hatch.build.targets.sdist]
-include = [
-    "/tcorex",
+packages = [
+    "gawseed_tcorex",
 ]

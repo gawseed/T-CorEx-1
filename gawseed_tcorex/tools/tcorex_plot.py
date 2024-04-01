@@ -8,7 +8,7 @@ import argparse
 import pickle
 import sys
 import os
-import tcorex.plot_utils
+import gawseed_tcorex.plot_utils
 from logging import info, debug, warn
 
 import matplotlib
@@ -36,7 +36,7 @@ def main():
     args = parser.parse_args()
 
     # import needed modules from ml-tools
-    tcorex.plot_utils.set_style(plt)
+    gawseed.tcorex.plot_utils.set_style(plt)
 
     # import needed tools from T-CorEx code
     from tcorex.covariance import frob_diffs_given_factors
