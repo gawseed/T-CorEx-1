@@ -29,6 +29,10 @@ tcorex -w 30 -n 100 -w 30 -g .1 -l .5 input_data.csv output.pkl
 
 Discussion and help with selecting parameters is discussed below.
 
+The CSV file should have a header row, and the default columns to use
+are *timestamp*, *key* and *value* but may be changed with
+`--time-column`, `-k` and `-v`.
+
 ## Displaying results
 
 To list the correlations within each window, use
@@ -78,7 +82,7 @@ be anywhere in the window.
 
 ### Gamma
 
-Range: 0.1-10
+Range: 0.1 - 10
 
 The Gamma value sets the decay rate for sample weights.  Bigger values
 will result in more data being included, which is good for smaller
@@ -86,7 +90,9 @@ datasets.  If enough data is present, then low values should be used.
 
 ### L1 regularization strength
 
-Higher L1 values are better better for signals with rapid changes
+Range: 0 - 1.0
+
+Higher L1 values are better better for signals with rapid changes.
 
 ### L2
 
