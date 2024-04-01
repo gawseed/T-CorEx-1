@@ -142,8 +142,7 @@ def pivot_table(df, time_column, key, value_column):
         min_gap = min(min_gap, df.index[i + 1] - df.index[i])
 
     df = df.reindex(index=pd.date_range(df.index[0], df.index[-1],
-                                        freq=df.index[1] - df.index[0]),
-                    labels=time_column)
+                                        freq=df.index[1] - df.index[0]))
     df = df.fillna(0)
 
     return df
@@ -155,8 +154,7 @@ def load_and_pivot_table(filename, time_column, key, value_column):
     df = pd.read_csv(filename,
                      dtype={'count': np.int32, 'timestamp': np.int32,
                             'key': str})
-    import pdb ; pdb.set_trace()
-    return pivot_table(df, key, value_column, time_column)
+    return pivot_table(df, time_column, key, value_column)
 
 
 if __name__ == '__main__':
